@@ -11,7 +11,7 @@
             height: 100%;
             overflow: hidden;
             background: #000;
-            font-family: "Arial", sans-serif; /* 修改为你电脑上的字体，例如："Microsoft YaHei" */
+            font-family: "Arial", sans-serif;
         }
         #main-content {
             position: absolute;
@@ -32,7 +32,6 @@
             font-family: "Microsoft YaHei", sans-serif;
             font-size: 36px;
         }
-        /* 图表容器 */
         #chart-container {
             position: absolute;
             top: 50%;
@@ -53,7 +52,6 @@
 
     <div id="particles-js"></div>
 
-    <!-- 图表容器 -->
     <div id="chart-container">
         <canvas id="myChart"></canvas>
     </div>
@@ -69,44 +67,17 @@
                         "value_area": 500
                     }
                 },
-                "color": {
-                    "value": "#ffffff"
-                },
+                "color": { "value": "#ffffff" },
                 "shape": {
                     "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    },
-                    "polygon": {
-                        "nb_sides": 5
-                    },
-                    "image": {
-                        "src": "img/github.svg",
-                        "width": 100,
-                        "height": 100
-                    }
+                    "stroke": { "width": 0, "color": "#000000" },
                 },
                 "opacity": {
                     "value": 0.5,
                     "random": false,
-                    "anim": {
-                        "enable": false,
-                        "speed": 1,
-                        "opacity_min": 0.1,
-                        "sync": false
-                    }
+                    "anim": { "enable": false }
                 },
-                "size": {
-                    "value": 3,
-                    "random": true,
-                    "anim": {
-                        "enable": false,
-                        "speed": 40,
-                        "size_min": 0.1,
-                        "sync": false
-                    }
-                },
+                "size": { "value": 3, "random": true },
                 "line_linked": {
                     "enable": true,
                     "distance": 150,
@@ -114,57 +85,15 @@
                     "opacity": 0.4,
                     "width": 1
                 },
-                "move": {
-                    "enable": true,
-                    "speed": 1,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
-                }
+                "move": { "enable": true, "speed": 1 }
             },
             "interactivity": {
-                "detect_on": "canvas",
                 "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "repulse"
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
                 },
                 "modes": {
-                    "grab": {
-                        "distance": 400,
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
-                    "repulse": {
-                        "distance": 200
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
-                    }
+                    "repulse": { "distance": 200 }
                 }
             },
             "retina_detect": true
@@ -190,27 +119,12 @@
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ["KNN", "逻辑回归", "支持向量机", "K-means聚类", "朴素贝叶斯", "决策树", "随机森林", "AdaBoost", "梯度提升"],
-
+                labels: labels,
                 datasets: [
                     {
-                        label: '准确率',
-                        data: [0.9533, 0.9600, 0.9667, 0.2667, 0.9533, 0.9533, 0.9667, 0.9533, 0.9600],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 2,
-                        fill: false
-                    },
-                    {
-                        label: '标准差',
-                        data: [0.0340, 0.0389, 0.0298, 0.3477, 0.0267, 0.0340, 0.0211, 0.0340, 0.0327],
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 2,
-                        fill: false
-                    },
-                    {
-                        label: '标准差',
-                        data: [0.0340, 0.0389, 0.0298, 0.3477, 0.0267, 0.0340, 0.0211, 0.0340, 0.0327],
-                        borderColor: 'rgb(255,128,0)',
+                        label: '训练损失',
+                        data: losses,
+                        borderColor: 'rgb(255, 165, 0)',
                         borderWidth: 2,
                         fill: false
                     }
@@ -219,13 +133,10 @@
             options: {
                 responsive: true,
                 scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: { beginAtZero: true }
                 }
             }
         });
-
     </script>
 </body>
 </html>
