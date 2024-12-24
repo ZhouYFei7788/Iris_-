@@ -67,3 +67,6 @@ with torch.no_grad():
     acc = accuracy_score(y_test, predicted)
 
 print(f"Test Accuracy: {acc * 100:.2f}%")
+
+# # 7.保存模型
+# torch.save(model.state_dict(), "model.pth")
