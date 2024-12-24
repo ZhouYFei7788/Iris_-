@@ -20,10 +20,9 @@ X_test = torch.tensor(X_test, dtype=torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.long)
 
 
-# 3. 定义全连接神经网络模型
-class IrisFCNN(nn.Module):
+class FCNN(nn.Module):
     def __init__(self):
-        super(IrisFCNN, self).__init__()
+        super(FCNN, self).__init__()
         self.fc1 = nn.Linear(4, 16)  # 输入层（4个特征），隐藏层（16个神经元）
         self.fc2 = nn.Linear(16, 8)  # 隐藏层（16个神经元），输出层（8个神经元）
         self.fc3 = nn.Linear(8, 3)  # 输出层（3类）
@@ -36,12 +35,12 @@ class IrisFCNN(nn.Module):
         return x
 
 
-# 4. 初始化模型、损失函数和优化器
-model = IrisFCNN()
+
+model = FCNN()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 
-# 5. 训练模型
+
 epochs = 100
 for epoch in range(epochs):
     model.train()
@@ -57,7 +56,7 @@ for epoch in range(epochs):
 
     # 每10个epoch打印一次损失
     if (epoch + 1) % 10 == 0:
-        print(f"Epoch [{epoch + 1}/{epochs}], Loss: {loss.item():.4f}")
+        print(f"轮次 [{epoch + 1}/{epochs}], Loss: {loss.item():.4f}")
 
 # 6. 测试模型
 model.eval()
@@ -66,7 +65,7 @@ with torch.no_grad():
     _, predicted = torch.max(test_outputs, 1)
     acc = accuracy_score(y_test, predicted)
 
-print(f"Test Accuracy: {acc * 100:.2f}%")
+print(f"测试精度: {acc * 100:.2f}%")
 
 # # 7.保存模型
 # torch.save(model.state_dict(), "model.pth")

@@ -93,49 +93,49 @@ gb.fit(X_train, y_train)
 y_pred_gb = gb.predict(X_test)
 print("梯度推动准确率:", accuracy_score(y_test, y_pred_gb))
 
-# 10. 使用PyTorch实现神经网络
-class NeuralNetwork(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(NeuralNetwork, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, output_size)
-        self.softmax = nn.Softmax(dim=1)
-
-    def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        x = self.relu(x)
-        x = self.fc3(x)
-        return self.softmax(x)
-
-# 定义模型、损失函数和优化器
-input_size = X_train.shape[1]
-hidden_size = 10
-output_size = 3
-model = NeuralNetwork(input_size, hidden_size, output_size)
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
-
-# 训练模型
-epochs = 50
-for epoch in range(epochs):
-    # 前向传播
-    outputs = model(X_train_tensor)
-    loss = criterion(outputs, y_train_tensor)
-
-    # 反向传播和优化
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-    if (epoch + 1) % 10 == 0:
-        print(f"Epoch [{epoch + 1}/{epochs}], Loss: {loss.item():.4f}")
-
-# 测试模型
-with torch.no_grad():
-    y_pred_nn = model(X_test_tensor)
-    y_pred_nn = torch.argmax(y_pred_nn, axis=1)
-    print("神经网络准确率 (PyTorch):", accuracy_score(y_test_tensor, y_pred_nn))
+# # 10. 全连接神经网络
+# class NeuralNetwork(nn.Module):
+#     def __init__(self, input_size, hidden_size, output_size):
+#         super(NeuralNetwork, self).__init__()
+#         self.fc1 = nn.Linear(input_size, hidden_size)
+#         self.relu = nn.ReLU()
+#         self.fc2 = nn.Linear(hidden_size, hidden_size)
+#         self.fc3 = nn.Linear(hidden_size, output_size)
+#         self.softmax = nn.Softmax(dim=1)
+#
+#     def forward(self, x):
+#         x = self.fc1(x)
+#         x = self.relu(x)
+#         x = self.fc2(x)
+#         x = self.relu(x)
+#         x = self.fc3(x)
+#         return self.softmax(x)
+#
+# # 定义模型、损失函数和优化器
+# input_size = X_train.shape[1]
+# hidden_size = 10
+# output_size = 3
+# model = NeuralNetwork(input_size, hidden_size, output_size)
+# criterion = nn.CrossEntropyLoss()
+# optimizer = optim.Adam(model.parameters(), lr=0.01)
+#
+# # 训练模型
+# epochs = 50
+# for epoch in range(epochs):
+#     # 前向传播
+#     outputs = model(X_train_tensor)
+#     loss = criterion(outputs, y_train_tensor)
+#
+#     # 反向传播和优化
+#     optimizer.zero_grad()
+#     loss.backward()
+#     optimizer.step()
+#
+#     if (epoch + 1) % 10 == 0:
+#         print(f"Epoch [{epoch + 1}/{epochs}], Loss: {loss.item():.4f}")
+#
+# # 测试模型
+# with torch.no_grad():
+#     y_pred_nn = model(X_test_tensor)
+#     y_pred_nn = torch.argmax(y_pred_nn, axis=1)
+#     print("神经网络准确率 (PyTorch):", accuracy_score(y_test_tensor, y_pred_nn))
