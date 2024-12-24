@@ -113,7 +113,7 @@ import cx_Oracle
 connection = cx_Oracle.connect("C##YUANWEIHUA", "root", "localhost/XE")
 cursor = connection.cursor()
 
-# 加载鸢尾花数据集
+# 鸢尾花数据集加载
 data = load_iris()
 X = data.data
 y = data.target
