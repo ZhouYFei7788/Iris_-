@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>鸢尾花识别各大算法效果</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+<style>
+body {
+    background-color: #000000;
+    margin: 0px;
+    overflow: hidden;
+    font-family: 'MicroSoft YaHei', sans-serif;
+}
+
+a {
+    color: #0078ff;
+}
+
+#main-title {
+    position: absolute;
+    top: 60%;  /* 调整标题的位置 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    color: white;
+    text-align: center;
+}
+
+#button {
+    position: absolute;
+    top: 70%;  /* 调整按钮的位置 */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 20px;
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#button:hover {
+    background-color: #005bb5;
+}
+
+</style>
+</head>
+<body>
+
+<div id="main-title">鸢尾花识别算法效果</div>
+
+<button id="button" onclick="console.log('Button clicked'); window.location.href='ui.html';">点击跳转</button>
+<!--<button id="button" onclick="console.log('Button clicked'); window.location.href='file:///D:/py_xiangm/JWW/ui.html';">点击跳转</button>-->
+
+
+
+<script type="text/javascript" src="three.min.js"></script>
+<script type="text/javascript">
+var SEPARATION = 100, AMOUNTX = 50, AMOUNTY = 50;
+
+var container;
+var camera, scene, renderer;
+
+var particles, particle, count = 0;
+
+var mouseX = 0, mouseY = 0;
+
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
+
+init();
+animate();
+
+function init() {
+
+    container = document.createElement( 'div' );
+    document.body.appendChild( container );
+
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+    camera.position.z = 1800;  // 将摄像机位置向下调整
+
+    scene = new THREE.Scene();
+
+    particles = new Array();
+
+    var PI2 = Math.PI * 2;
+    var material = new THREE.ParticleCanvasMaterial( {
+        color: 0xffffff,
+        program: function ( context ) {
+            context.beginPath();
+            context.arc( 0, 0, 1, 0, PI2, true );
+            context.fill();
+        }
+    } );
+
+    var i = 0;
+
+    for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+        for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+            particle = particles[ i ++ ] = new THREE.Particle( material );
+            particle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+            particle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+            particle.position.y = -1200;  // 调整粒子初始位置，让它们向下偏移
+            scene.add( particle );
+        }
+    }
+
+    renderer = new THREE.CanvasRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    container.appendChild( renderer.domElement );
+
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+    document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+    window.addEventListener( 'resize', onWindowResize, false );
+}
+
+function onWindowResize() {
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+function onDocumentMouseMove( event ) {
+    mouseX = event.clientX - windowHalfX;
+    mouseY = event.clientY - windowHalfY;
+}
+
+function onDocumentTouchStart( event ) {
+    if ( event.touches.length === 1 ) {
+        event.preventDefault();
+        mouseX = event.touches[ 0 ].pageX - windowHalfX;
+        mouseY = event.touches[ 0 ].pageY - windowHalfY;
+    }
+}
+
+function onDocumentTouchMove( event ) {
+    if ( event.touches.length === 1 ) {
+        event.preventDefault();
+        mouseX = event.touches[ 0 ].pageX - windowHalfX;
+        mouseY = event.touches[ 0 ].pageY - windowHalfY;
+    }
+}
+
+function animate() {
+    requestAnimationFrame( animate );
+    render();
+}
+
+function render() {
+    camera.position.x += ( mouseX - camera.position.x ) * .05;
+    camera.position.y += ( - mouseY - camera.position.y ) * .05;
+    camera.lookAt( scene.position );
+
+    var i = 0;
+    for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+        for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+            particle = particles[ i++ ];
+            particle.position.y = ( Math.sin( ( ix + count ) * 0.3 ) * 50 ) + ( Math.sin( ( iy + count ) * 0.5 ) * 50 );
+            particle.scale.x = particle.scale.y = ( Math.sin( ( ix + count ) * 0.3 ) + 1 ) * 2 + ( Math.sin( ( iy + count ) * 0.5 ) + 1 ) * 2;
+        }
+    }
+
+    renderer.render( scene, camera );
+    count += 0.1;
+}
+</script>
+
+<div style="text-align:center;margin:1px 0; font:normal 14px/24px 'MicroSoft YaHei';color:#ffffff">
+<p>适用浏览器：360、FireFox、Chrome、Safari、Opera、傲游、搜狗、世界之窗. 不支持IE8及以下浏览器。</p>
+</div>
+</body>
+</html>
