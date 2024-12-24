@@ -193,7 +193,7 @@ def cross_val_pytorch(model_class, X, y, cv=5, epochs=10):
             accuracy = accuracy_score(y_val_fold, y_pred_val)
             accuracies.append(accuracy)
 
-    print(f"神经网络交叉验证准确率: {np.mean(accuracies) * 100:.2f}% ± {np.std(accuracies) * 100:.2f}%")
+    print(f"神经网络交叉验证ACC: {np.mean(accuracies) * 100:.2f}% ± {np.std(accuracies) * 100:.2f}%")
 
     # 可视化损失曲线
     avg_losses = np.mean(losses, axis=0)
