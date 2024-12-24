@@ -1,7 +1,7 @@
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, roc_auc_score, recall_score, f1_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -9,10 +9,10 @@ from sklearn.cluster import KMeans
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import numpy as np
 
 # 加载鹦尾花数据集
 iris = load_iris()
@@ -26,73 +26,86 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
+
 # 转换为PyTorch的Tensor
-def to_tensor(data, targe):
-    return torch.tensor(data, dtype=torch.float32), torch.tensor(targe, dtype=torch.long)
+def to_tensor(data, target):
+    return torch.tensor(data, dtype=torch.float32), torch.tensor(target, dtype=torch.long)
+
 
 X_train_tensor, y_train_tensor = to_tensor(X_train, y_train)
 X_test_tensor, y_test_tensor = to_tensor(X_test, y_test)
 
+
+# 计算并打印各模型的准确率、AUC、Recall和F1值
+def evaluate_model(model, X_train, y_train, X_test, y_test):
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred, average='macro')
+    f1 = f1_score(y_test, y_pred, average='macro')
+
+    try:
+        auc = roc_auc_score(y_test, model.predict_proba(X_test), multi_class='ovr')
+    except AttributeError:
+        auc = 'AUC无法估算'
+
+    return accuracy, auc, recall, f1
+
+
 # 1. KNN算法
 knn = KNeighborsClassifier(n_neighbors=3)
-knn.fit(X_train, y_train)
-y_pred_knn = knn.predict(X_test)
-print("KNN准确率:", accuracy_score(y_test, y_pred_knn))
+accuracy_knn, auc_knn, recall_knn, f1_knn = evaluate_model(knn, X_train, y_train, X_test, y_test)
+print(f"KNN准确率: {accuracy_knn:.4f}, AUC: {auc_knn}, Recall: {recall_knn:.4f}, F1: {f1_knn:.4f}")
 
-# 2. 逻辑回应算法
+# 2. 逻辑回归
 log_reg = LogisticRegression()
-log_reg.fit(X_train, y_train)
-y_pred_log_reg = log_reg.predict(X_test)
-print("逻辑回应准确率:", accuracy_score(y_test, y_pred_log_reg))
+accuracy_log_reg, auc_log_reg, recall_log_reg, f1_log_reg = evaluate_model(log_reg, X_train, y_train, X_test, y_test)
+print(f"逻辑回归准确率: {accuracy_log_reg:.4f}, AUC: {auc_log_reg}, Recall: {recall_log_reg:.4f}, F1: {f1_log_reg:.4f}")
 
 # 3. 支持向量机 (SVM)
-svm = SVC(kernel='linear')
-svm.fit(X_train, y_train)
-y_pred_svm = svm.predict(X_test)
-print("SVM准确率:", accuracy_score(y_test, y_pred_svm))
+svm = SVC(kernel='linear', probability=True)
+accuracy_svm, auc_svm, recall_svm, f1_svm = evaluate_model(svm, X_train, y_train, X_test, y_test)
+print(f"SVM准确率: {accuracy_svm:.4f}, AUC: {auc_svm}, Recall: {recall_svm:.4f}, F1: {f1_svm:.4f}")
 
 # 4. k-means聚类算法
 kmeans = KMeans(n_clusters=3, random_state=42)
 kmeans.fit(X_train)
-# 将k-means聚类结果映射到真实标签
 kmeans_labels = np.zeros_like(kmeans.labels_)
 for i in range(3):
     mask = (kmeans.labels_ == i)
     kmeans_labels[mask] = np.bincount(y_train[mask]).argmax()
 y_pred_kmeans = kmeans.predict(X_test)
 y_pred_kmeans = np.array([kmeans_labels[label] for label in y_pred_kmeans])
-print("k-means准确率:", accuracy_score(y_test, y_pred_kmeans))
+accuracy_kmeans = accuracy_score(y_test, y_pred_kmeans)
+recall_kmeans = recall_score(y_test, y_pred_kmeans, average='macro')
+f1_kmeans = f1_score(y_test, y_pred_kmeans, average='macro')
+print(f"k-means准确率: {accuracy_kmeans:.4f}, Recall: {recall_kmeans:.4f}, F1: {f1_kmeans:.4f}")
 
 # 5. 朴素贝叶斯
 nb = GaussianNB()
-nb.fit(X_train, y_train)
-y_pred_nb = nb.predict(X_test)
-print("朴素贝叶斯准确率:", accuracy_score(y_test, y_pred_nb))
+accuracy_nb, auc_nb, recall_nb, f1_nb = evaluate_model(nb, X_train, y_train, X_test, y_test)
+print(f"朴素贝叶斯准确率: {accuracy_nb:.4f}, AUC: {auc_nb}, Recall: {recall_nb:.4f}, F1: {f1_nb:.4f}")
 
 # 6. 决策树
 dt = DecisionTreeClassifier(random_state=42)
-dt.fit(X_train, y_train)
-y_pred_dt = dt.predict(X_test)
-print("决策树准确率:", accuracy_score(y_test, y_pred_dt))
+accuracy_dt, auc_dt, recall_dt, f1_dt = evaluate_model(dt, X_train, y_train, X_test, y_test)
+print(f"决策树准确率: {accuracy_dt:.4f}, AUC: {auc_dt}, Recall: {recall_dt:.4f}, F1: {f1_dt:.4f}")
 
 # 7. 随机森林
 rf = RandomForestClassifier(random_state=42)
-rf.fit(X_train, y_train)
-y_pred_rf = rf.predict(X_test)
-print("随机森林准确率:", accuracy_score(y_test, y_pred_rf))
+accuracy_rf, auc_rf, recall_rf, f1_rf = evaluate_model(rf, X_train, y_train, X_test, y_test)
+print(f"随机森林准确率: {accuracy_rf:.4f}, AUC: {auc_rf}, Recall: {recall_rf:.4f}, F1: {f1_rf:.4f}")
 
 # 8. AdaBoost
 ada = AdaBoostClassifier(random_state=42)
-ada.fit(X_train, y_train)
-y_pred_ada = ada.predict(X_test)
-print("AdaBoost准确率:", accuracy_score(y_test, y_pred_ada))
+accuracy_ada, auc_ada, recall_ada, f1_ada = evaluate_model(ada, X_train, y_train, X_test, y_test)
+print(f"AdaBoost准确率: {accuracy_ada:.4f}, AUC: {auc_ada}, Recall: {recall_ada:.4f}, F1: {f1_ada:.4f}")
 
 # 9. 梯度推动
 gb = GradientBoostingClassifier(random_state=42)
-gb.fit(X_train, y_train)
-y_pred_gb = gb.predict(X_test)
-print("梯度推动准确率:", accuracy_score(y_test, y_pred_gb))
-
+accuracy_gb, auc_gb, recall_gb, f1_gb = evaluate_model(gb, X_train, y_train, X_test, y_test)
+print(f"梯度推动准确率: {accuracy_gb:.4f}, AUC: {auc_gb}, Recall: {recall_gb:.4f}, F1: {f1_gb:.4f}")
 # # 10. 全连接神经网络
 # class NeuralNetwork(nn.Module):
 #     def __init__(self, input_size, hidden_size, output_size):

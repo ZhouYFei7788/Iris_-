@@ -22,6 +22,9 @@ from yellowbrick.classifier import ClassPredictionError
 # 设置Matplotlib的中文字体
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'Arial']  # 如果没有'Microsoft YaHei'，可以使用系统其他字体
 
+# plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'Arial']  # 如果没有'Microsoft YaHei'，可以使用系统其他字体
+plt.rcParams['axes.unicode_minus'] = False  # 用于显示负号
+
 # 加载鸢尾花数据集
 iris = load_iris()
 X, y = iris.data, iris.target
@@ -33,13 +36,11 @@ X = scaler.fit_transform(X)
 # 划分训练集和测试集
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-
 # 模型评估函数
 def evaluate_model(model, X, y):
     # 使用交叉验证，计算模型的准确率
     scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')  # cv=5表示5折交叉验证
     return scores.mean(), scores.std()
-
 
 # 连接数据库
 def connect_to_db():
@@ -47,13 +48,11 @@ def connect_to_db():
     connection = cx_Oracle.connect(user='C##YUANWEIHUA', password='root', dsn=dsn_tns)  # 修改为实际的用户名和密码
     return connection
 
-
 # 创建数据库连接
 conn = cx_Oracle.connect('C##YUANWEIHUA/root@XE')
 
 # 创建游标
 cursor = conn.cursor()
-
 
 def insert_model_results(model_name, mean_score, std_score, epoch_loss=None, epoch=None):
     # 确保epoch_loss是有效的数值
@@ -74,7 +73,6 @@ def insert_model_results(model_name, mean_score, std_score, epoch_loss=None, epo
                    mean_score=float(mean_score), std_score=float(std_score),
                    epoch_loss=float(epoch_loss) if epoch_loss is not None else None, epoch=epoch)
     conn.commit()
-
 
 # 模拟模型结果
 model_name = "KNN"
@@ -123,8 +121,12 @@ knn.fit(X_train, y_train)
 visualizer = ClassPredictionError(knn)
 visualizer.fit(X_train, y_train)
 visualizer.score(X_test, y_test)
-visualizer.show()
+# 修改图表标题和标签为中文
+visualizer.ax.set_title("分类器的错误预测")
+visualizer.ax.set_xlabel("实际类别")
+visualizer.ax.set_ylabel("预测类别")
 
+visualizer.show()
 
 # 使用PyTorch训练神经网络模型
 class NeuralNetwork(nn.Module):
@@ -137,7 +139,6 @@ class NeuralNetwork(nn.Module):
         x = torch.relu(self.fc1(x))
         x = self.fc2(x)
         return x
-
 
 def cross_val_pytorch(model_class, X, y, cv=5, epochs=10):
     fold_size = len(X) // cv
@@ -194,7 +195,6 @@ def cross_val_pytorch(model_class, X, y, cv=5, epochs=10):
     plt.ylabel("Loss")
     plt.legend()
     plt.show()
-
 
 # 对神经网络使用交叉验证
 X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
