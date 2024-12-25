@@ -139,7 +139,7 @@ class NeuralNetwork(nn.Module):
         return x
 
 
-def cross_val_pytorch(model_class, X, y, cv=5, epochs=10):
+def cross_val_pytorch(model_class, X, y, cv=5, epochs=100):
     fold_size = len(X) // cv
     accuracies = [0]
     losses = []
