@@ -6,6 +6,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  # 3D 可视化所需
 import plotly.express as px
 
 # 1. 加载数据集
