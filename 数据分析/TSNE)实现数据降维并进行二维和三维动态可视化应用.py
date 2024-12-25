@@ -63,6 +63,11 @@ plot_2d(X_tsvd[:, :2], y, 'TSVD')
 plot_2d(X_lda, y, 'LDA')
 
 # 三维可视化 (PCA, TSVD, t-SNE)
-plot_3d_safe(X_pca, y, 'PCA')
-# plot_3d_safe(X_tsvd, y, 'TSVD')
-# plot_3d_safe(X_tsne, y, 't-SNE')
+plot_3d_matplotlib(X_pca, y, 'PCA')  # 使用 Matplotlib 显示
+plot_3d_matplotlib(X_tsvd, y, 'TSVD')  # 使用 Matplotlib 显示
+plot_3d_matplotlib(X_tsne, y, 't-SNE')  # 使用 Matplotlib 显示
+
+# 如果想使用 Plotly 可视化 (可选)
+plot_3d_plotly(X_pca, y, 'PCA')
+plot_3d_plotly(X_tsvd, y, 'TSVD')
+plot_3d_plotly(X_tsne, y, 't-SNE')
